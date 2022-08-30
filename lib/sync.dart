@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:http/http.dart' as http;
-import 'package:nrs_app/utils.dart';
 
 enum Status {
   completed,
@@ -65,22 +64,9 @@ abstract class Service<AuthData> {
   int getRawScore(double score);
 
   Future<Map<String, AnimeListEntry>> loadUserAnimeList(
-      http.Client client, AuthData data);
+      http.Client client, AuthData auth);
   Future<void> updateAnimeEntry(
-      http.Client client, AuthData data, AnimeListEntry entry);
-
-  Map<String, dynamic> _createServiceAODMap(
-      List<dynamic> animeOfflineDatabase) {
-    var result = <String, dynamic>{};
-    for (final entry in animeOfflineDatabase) {
-      final id = getIdFromAOD(
-          entry["sources"].map<String>((it) => it as String).toList());
-      if (id != null) {
-        result[id] = entry;
-      }
-    }
-    return result;
-  }
+      http.Client client, AuthData auth, AnimeListEntry entry);
 
   Map<String, AnimeListEntry> createAnimeMapFromNRSEntries(
       Map<String, dynamic> entries, Map<String, dynamic> scores) {

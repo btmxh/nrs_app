@@ -28,7 +28,7 @@ class MAL extends Service<String> {
 
   @override
   Future<Map<String, AnimeListEntry>> loadUserAnimeList(
-      http.Client client, String authData) async {
+      http.Client client, String auth) async {
     var result = <String, AnimeListEntry>{};
     Uri? nextPageUri = Uri.https(
       "api.myanimelist.net",
@@ -38,7 +38,7 @@ class MAL extends Service<String> {
 
     while (nextPageUri != null) {
       final response = await client.get(nextPageUri, headers: {
-        "Authorization": "Bearer $authData",
+        "Authorization": "Bearer $auth",
       });
       final json = await response.jsonOrThrow;
       if (json["paging"].containsKey("next")) {
@@ -65,11 +65,11 @@ class MAL extends Service<String> {
 
   @override
   Future<void> updateAnimeEntry(
-      http.Client client, String authData, AnimeListEntry entry) async {
+      http.Client client, String auth, AnimeListEntry entry) async {
     final response = await client.put(
       Uri.https("api.myanimelist.net", "/v2/anime/${entry.id}/my_list_status"),
       headers: {
-        "Authorization": "Bearer $authData",
+        "Authorization": "Bearer $auth",
       },
       body: {
         "status": statusToMAL[entry.status],

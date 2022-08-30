@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:http/src/client.dart';
+import 'package:http/http.dart' as http;
 import 'package:nrs_app/common.dart';
 import 'package:nrs_app/sync.dart';
 import 'package:nrs_app/utils.dart';
@@ -36,7 +36,7 @@ class AniList extends Service<AniListAuthData> {
 
   @override
   Future<Map<String, AnimeListEntry>> loadUserAnimeList(
-      Client client, AniListAuthData data) async {
+      http.Client client, AniListAuthData auth) async {
     var result = <String, AnimeListEntry>{};
     var hasNextPage = true;
     var pageIndex = 1;
@@ -62,10 +62,10 @@ class AniList extends Service<AniListAuthData> {
         'query': graphql,
         'variables': jsonEncode({
           'page': pageIndex,
-          'username': data.username,
+          'username': auth.username,
         }),
       }, headers: {
-        "Authorization": "Bearer ${data.accessToken}"
+        "Authorization": "Bearer ${auth.accessToken}"
       });
 
       final json = await response.jsonOrThrow;
@@ -92,7 +92,7 @@ class AniList extends Service<AniListAuthData> {
 
   @override
   Future<void> updateAnimeEntry(
-      Client client, AniListAuthData data, AnimeListEntry entry) async {
+      http.Client client, AniListAuthData auth, AnimeListEntry entry) async {
     const graphql = r"""
       mutation($id: Int, $scoreRaw: Int, $status: MediaListStatus, $progress: Int) {
         SaveMediaListEntry(mediaId: $id, scoreRaw: $scoreRaw, status: $status, progress: $progress) {
@@ -110,7 +110,7 @@ class AniList extends Service<AniListAuthData> {
         'progress': entry.episode,
       }),
     }, headers: {
-      "Authorization": "Bearer ${data.accessToken}"
+      "Authorization": "Bearer ${auth.accessToken}"
     });
 
     response.bodyOrThrow;
