@@ -140,6 +140,8 @@ Future<void> sync<AuthData>(
     log("Updating entry: ${entry.id}");
     entry.episode ??= getDefaultStatusEpisodes(
         entry.status, serviceAOD[entry.id]["episodes"]);
+    log(serviceAOD.length.toString());
+    log(serviceAOD[entry.id]["episodes"]);
     await service.updateAnimeEntry(client, authData, entry);
   }
 }
