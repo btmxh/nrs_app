@@ -68,6 +68,18 @@ abstract class Service<AuthData> {
   Future<void> updateAnimeEntry(
       http.Client client, AuthData auth, AnimeListEntry entry);
 
+  Map<String, dynamic> createServiceAODMap(List<dynamic> animeOfflineDatabase) {
+    var result = <String, dynamic>{};
+    for (final entry in animeOfflineDatabase) {
+      final id = getIdFromAOD(
+          entry["sources"].map<String>((it) => it as String).toList());
+      if (id != null) {
+        result[id] = entry;
+      }
+    }
+    return result;
+  }
+
   Map<String, AnimeListEntry> createAnimeMapFromNRSEntries(
       Map<String, dynamic> entries, Map<String, dynamic> scores) {
     var result = <String, AnimeListEntry>{};
@@ -119,11 +131,15 @@ Future<void> sync<AuthData>(
     AuthData authData,
     void Function(String) log) async {
   final nrsList = service.createAnimeMapFromNRSEntries(nrsEntries, nrsScores);
+  final serviceAOD = service.createServiceAODMap(animeOfflineDatabase);
   log("Loading user anime list");
   final serviceList = await service.loadUserAnimeList(client, authData);
   nrsList.removeWhere((id, entry) => !needsUpdate(entry, serviceList[id]));
+
   for (final entry in nrsList.values) {
     log("Updating entry: ${entry.id}");
+    entry.episode ??= getDefaultStatusEpisodes(
+        entry.status, serviceAOD[entry.id]["episodes"]);
     await service.updateAnimeEntry(client, authData, entry);
   }
 }
