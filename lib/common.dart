@@ -5,6 +5,8 @@ String? getIdFromAODByURLPrefix(List<String> sources, String prefix) {
       return source.substring(idx + prefix.length);
     }
   }
+
+  return null;
 }
 
 String? getIdFromEntryByDAHAdditionalSources(nrsEntry, String key) {
