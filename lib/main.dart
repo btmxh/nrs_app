@@ -387,26 +387,31 @@ class _MainPageState extends State<MainPage> {
               PopupMenuItem(
                 child: const Text("Sync"),
                 onTap: () async {
-                  log("Loading AOD");
-                  final aod = await loadAnimeOfflineDatabase(
-                      cache, Uri.parse(data[TextFieldLabel.aodJsonUri.name]!));
-                  log("Loading entries.json");
-                  final entries = await loadNRSFilteredEntryList(cache,
-                      Uri.parse(data[TextFieldLabel.entriesJsonUri.name]!));
-                  log("Loading scores.json");
-                  final scores = await loadNRSFilteredEntryList(cache,
-                      Uri.parse(data[TextFieldLabel.scoresJsonUri.name]!));
-                  log("Syncing MAL");
-                  final malAuthData = data[TextFieldLabel.malAccessToken.name]!;
-                  final alAuthData = AniListAuthData(
-                      data[TextFieldLabel.anilistUsername.name]!,
-                      data[TextFieldLabel.anilistAccessToken.name]!);
-                  await sync(
-                      aod, MAL(), client, entries, scores, malAuthData, log);
-                  log("Syncing AniList");
-                  await sync(
-                      aod, AniList(), client, entries, scores, alAuthData, log);
-                  log("Done");
+                  try {
+                    log("Loading AOD");
+                    final aod = await loadAnimeOfflineDatabase(cache,
+                        Uri.parse(data[TextFieldLabel.aodJsonUri.name]!));
+                    log("Loading entries.json");
+                    final entries = await loadNRSFilteredEntryList(cache,
+                        Uri.parse(data[TextFieldLabel.entriesJsonUri.name]!));
+                    log("Loading scores.json");
+                    final scores = await loadNRSFilteredEntryList(cache,
+                        Uri.parse(data[TextFieldLabel.scoresJsonUri.name]!));
+                    log("Syncing MAL");
+                    final malAuthData =
+                        data[TextFieldLabel.malAccessToken.name]!;
+                    final alAuthData = AniListAuthData(
+                        data[TextFieldLabel.anilistUsername.name]!,
+                        data[TextFieldLabel.anilistAccessToken.name]!);
+                    await sync(
+                        aod, MAL(), client, entries, scores, malAuthData, log);
+                    log("Syncing AniList");
+                    await sync(aod, AniList(), client, entries, scores,
+                        alAuthData, log);
+                    log("Done");
+                  } on HttpException catch (e) {
+                    await errorDialog(context, e);
+                  }
                 },
               ),
               PopupMenuItem(
