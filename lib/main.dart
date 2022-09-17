@@ -61,9 +61,9 @@ class _MainPageState extends State<MainPage> {
   static final Map<String, String> defaultData = {
     'nrsImplGitRepoUri': 'https://github.com/ngoduyanh/nrs-impl-kt',
     'entriesJsonUri':
-        'https://github.com/ngoduyanh/nrs-impl-kt/raw/master/output/entries.json',
+        'https://github.com/ngoduyanh/nrs-impl-kt/releases/download/latest-master/entries.json',
     'scoresJsonUri':
-        'https://github.com/ngoduyanh/nrs-impl-kt/raw/master/output/scores.json',
+        'https://github.com/ngoduyanh/nrs-impl-kt/releases/download/latest-master/scores.json',
     'aodJsonUri':
         'https://github.com/manami-project/anime-offline-database/raw/master/anime-offline-database-minified.json',
     'malAccessToken': '',
